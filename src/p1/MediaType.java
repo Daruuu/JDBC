@@ -5,7 +5,6 @@ import albumBasicJDBC.Connexio;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 
 public class MediaType {
     private int mediaTypeID;
@@ -24,10 +23,6 @@ public class MediaType {
         return mediaTypeID;
     }
 
-    public void setMediaTpeID(int mediaTpeID) {
-        this.mediaTypeID = mediaTpeID;
-    }
-
     public String getName() {
         return name;
     }
@@ -44,18 +39,18 @@ public class MediaType {
                 '}';
     }
 
-    public MediaType readMediaTypeById(int mediaTypeId) {
+    public MediaType searchMediaTypeById(int mediaTypeId) {
 
         MediaType mediaTypeObject = null;
 
-        String query = "SELECT * FROM MediaType WHERE mediaType = ?;";
+        String query = "SELECT * FROM MediaType WHERE mediaTypeId = ?;";
 
         try (PreparedStatement ps = con.prepareStatement(query)) {
             ps.setInt(1, mediaTypeId);
             ResultSet rs = ps.executeQuery();
 
             if (rs.next()) {
-                int idMediaT = rs.getInt("MediaTypeid");
+                int idMediaT = rs.getInt("MediaTypeId");
                 String name = rs.getString("Name");
                 mediaTypeObject = new MediaType(idMediaT, name);
             }
@@ -64,7 +59,7 @@ public class MediaType {
         } catch (Exception e) {
             System.out.println(e.getClass().getName() + ": " + e.getMessage());
         }
-        System.out.println("Read mediaType done!");
+        System.out.printf("MediaTypeId %s found!\n", mediaTypeId);
         return mediaTypeObject;
     }
 }

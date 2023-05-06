@@ -5,7 +5,6 @@ import albumBasicJDBC.Connexio;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 
 public class Genre {
     private int genreID;
@@ -25,10 +24,6 @@ public class Genre {
         return genreID;
     }
 
-    public void setGenreID(int genreID) {
-        this.genreID = genreID;
-    }
-
     public String getName() {
         return name;
     }
@@ -45,10 +40,10 @@ public class Genre {
                 '}';
     }
 
-    public Genre buscarGenrePorId(int generoId) throws SQLException {
+    public Genre searchGenderById(int generoId) {
         Genre genre = null;
 
-        String query = "SELECT * FROM Genre WHERE Genreid = ?;";
+        String query = "SELECT * FROM Genre WHERE GenreId = ?;";
 
         try (PreparedStatement ps = connection.prepareStatement(query)) {
             ps.setInt(1, generoId);
@@ -56,16 +51,18 @@ public class Genre {
             ResultSet rs = ps.executeQuery();
 
             while (rs.next()) {
-                int generId = rs.getInt("GenreId");
+                int genreId = rs.getInt("GenreId");
                 String name = rs.getString("Name");
 
-                genre = new Genre(generId, name);
+                genre = new Genre(genreId, name);
             }
+            ps.close();
+            rs.close();
 
         } catch (Exception e) {
             System.out.println(e.getClass().getName() + ": " + e.getMessage());
         }
-        System.out.println("operation done!");
+        System.out.printf("GenreId %s found!\n", generoId);
         return genre;
     }
 }

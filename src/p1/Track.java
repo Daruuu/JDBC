@@ -119,7 +119,7 @@ public class Track {
                 '}';
     }
 
-    boolean comprobarFKTrack(int idAlbumFk, int idGenreFk, int idMediaTypeIdFk) throws SQLException {
+    boolean comprobarTrackFks(int idAlbumFk, int idGenreFk, int idMediaTypeIdFk) throws SQLException {
 
         String queryAlbum = "SELECT * FROM Album WHERE AlbumId = ?";
         String queryMediaType = "SELECT * FROM MediaType WHERE MediaTypeId = ?";
@@ -141,47 +141,54 @@ public class Track {
             if (rsAlbum.next() && rsMedia.next() && rsGenre.next()) {
                 return true;
             } else {
-                throw new SQLException("Alguna de las comprobaciones no existe !");
+                throw new SQLException("Alguna de los ID de las FK no es correcto!");
             }
         } catch (Exception e) {
             System.out.println(e.getClass() + e.getMessage());
         }
-        return true;
+        return false;
     }
 
-    public int createTrack(String nameTrack, String composer, int milliseconds, int bytesTrack, float unitPriceTrack) throws SQLException {
+    public int createTrack(String nameTrack, int albumId, int mediaTypeId, int genreId, String composer, int milliseconds, int bytesTrack, float unitPriceTrack) throws SQLException {
+
         int nuevoIdAlbum = -1;
+
         String query = "INSERT INTO Track(Name, AlbumId, MediaTypeId, GenreId, Composer, Milliseconds, Bytes, UnitPrice)" +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (PreparedStatement ps = connection.prepareStatement(query)) {
 
             ps.setString(1, nameTrack);
-            ps.setString(2, composer);
-            ps.setInt(3, milliseconds);
-            ps.setInt(4, bytesTrack);
-            ps.setDouble(5, unitPriceTrack);
+            ps.setInt(2, albumId);
+            ps.setInt(3, mediaTypeId);
+            ps.setInt(4, genreId);
+            ps.setString(5, composer);
+            ps.setInt(6, milliseconds);
+            ps.setInt(7, bytesTrack);
+            ps.setFloat(8, unitPriceTrack);
 
             ps.executeUpdate();
 
             ResultSet rs = ps.getGeneratedKeys();
-            nuevoIdAlbum = rs.getInt(1);
             rs.next();
+            nuevoIdAlbum = rs.getInt(1);
 
             ps.close();
+            rs.close();
             System.out.println("new record created!");
             return nuevoIdAlbum;
 
-        } catch (Exception e) {
+        } catch (SQLException e) {
             System.out.println(e.getClass().getName() + ": " + e.getMessage());
         }
+        System.out.println("new track created correct!");
         return nuevoIdAlbum;
     }
 
-    public Track readTrack(int idTrack) throws SQLException {
+    public Track readTrackById(int idTrack) {
 
         Track track = null;
-        String query = "SELECT * FROM Track WHERE TrackId = ?";
+        String query = "SELECT * FROM Track WHERE TrackId = ?;";
 
         try (PreparedStatement ps = connection.prepareStatement(query)) {
 
@@ -199,30 +206,150 @@ public class Track {
                 String name = rs.getString("Name");
                 String composer = rs.getString("Composer");
                 int milliseconds = rs.getInt("Milliseconds");
-                int bytes = rs.getInt("bytes");
+                int bytes = rs.getInt("Bytes");
                 float unitPrice = rs.getFloat("UnitPrice");
 
                 Album a = new Album();
-                int idAlbumFKFunction = a.llegeixAlbum(idAlbumFk).getIdAlbum();
+                int idAlbumFKFunction = a.searchAlbumById(idAlbumFk).getIdAlbum();
 
                 MediaType mT = new MediaType();
-                int idMediaFkFunction = mT.readMediaTypeById(idMediaTypeFk).getMediaTpeID();
+                int idMediaFkFunction = mT.searchMediaTypeById(idMediaTypeFk).getMediaTpeID();
 
                 Genre g = new Genre();
-                int idGenreFkFunction = g.buscarGenrePorId(idGenreFk).getGenreID();
+                int idGenreFkFunction = g.searchGenderById(idGenreFk).getGenreID();
 
-                track = new Track(name, idAlbumFKFunction, idMediaFkFunction, idGenreFkFunction, composer, milliseconds, bytes, unitPrice);
+                if (comprobarTrackFks(idAlbumFk, idMediaTypeFk, idGenreFk)) {
+                    track = new Track(name, idAlbumFKFunction, idMediaFkFunction, idGenreFkFunction, composer, milliseconds, bytes, unitPrice);
+                    System.out.println("FKs of the table are correct!");
+                } else {
+                    System.out.println("foreign key of the table incorrect!!");
+                }
             }
+        } catch (SQLException e) {
+            System.err.println(e.getClass().getName() + "-" + e.getMessage());
         }
         return track;
     }
 
+    public Track readTrackByIdUsingJoin(int idTrack) {
+
+        Track track = null;
+        String query = "SELECT t.* " +
+                "FROM Track t " +
+                "JOIN Album al ON t.AlbumId = al.AlbumId " +
+                "JOIN MediaType m ON t.MediaTypeId = m.MediaTypeId " +
+                "JOIN Genre g ON t.GenreId = g.GenreId " +
+                "WHERE t.TrackID = ?";
+
+        try (PreparedStatement ps = connection.prepareStatement(query)) {
+
+            ps.setInt(1, idTrack);
+
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                //fk de la tabla Track
+                int idAlbumFk = rs.getInt("AlbumId");
+                int idMediaTypeFk = rs.getInt("MediaTypeId");
+                int idGenreFk = rs.getInt("GenreId");
+
+                // atributos de la tabla Track
+                String name = rs.getString("Name");
+                String composer = rs.getString("Composer");
+                int milliseconds = rs.getInt("Milliseconds");
+                int bytes = rs.getInt("Bytes");
+                float unitPrice = rs.getFloat("UnitPrice");
+
+/*
+                Album a = new Album();
+                int idAlbumFKFunction = a.searchAlbumById(idAlbumFk).getIdAlbum();
+
+                MediaType mT = new MediaType();
+                int idMediaFkFunction = mT.searchMediaTypeById(idMediaTypeFk).getMediaTpeID();
+
+                Genre g = new Genre();
+                int idGenreFkFunction = g.searchGenderById(idGenreFk).getGenreID();
+*/
+
+                if (comprobarTrackFks(idAlbumFk, idMediaTypeFk, idGenreFk)) {
+                    track = new Track(name, idAlbumFk, idMediaTypeFk, idGenreFk, composer, milliseconds, bytes, unitPrice);
+                    System.out.println("FKs of the table are correct!");
+                } else {
+                    System.out.println("foreign key of the table incorrect!!");
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println(e.getClass().getName() + "-" + e.getMessage());
+        }
+        return track;
+    }
+
+
+
+    public void modifiyTrack( String nameTrack, int albumId, int mediaTypeId, int genreId, String composer, int milliseconds, int bytesTrack, float unitPriceTrack) throws SQLException {
+
+        connection.setAutoCommit(false);
+
+        String query = "UPDATE Track" +
+                "SET Name = ?, AlbumId = ?, MediaTypeId = ?, GenreId = ?, Composer = ?, Milliseconds = ?, Bytes = ?, UnitPrice = ?" +
+                "WHERE TrackId = ?";
+
+        try(PreparedStatement ps = connection.prepareStatement(query)){
+            ps.setString(1, nameTrack);
+            ps.setInt(2, albumId);
+            ps.setInt(3,mediaTypeId);
+            ps.setInt(4, genreId);
+            ps.setString(5, composer);
+            ps.setInt(6,milliseconds);
+            ps.setInt(7, bytesTrack);
+            ps.setFloat(8,unitPriceTrack);
+            ps.setInt(9, trackId);
+
+            int updateDb = ps.executeUpdate();
+            connection.commit();
+        } catch (SQLException e) {
+            try{
+                connection.rollback();
+            } catch (SQLException e2){
+                throw new RuntimeException(e2);
+            }
+            throw new RuntimeException(e);
+        }
+
+    }
+
     public static void main(String[] args) throws SQLException {
         Scanner sc = new Scanner(System.in);
-        System.out.print("introduce idtrack: ");
-        int idTrack = sc.nextInt();
-        Track newTrack = new Track();
-        newTrack.readTrack(idTrack);
+//        System.out.print("introduce idtrack: ");
+//        int idTrack = sc.nextInt();
+        Track track = new Track();
+
+//        track = track.readTrackById(idTrack);
+//        System.out.println(track);
+
+//        track = track.readTrackByIdUsingJoin(idTrack);
+//        System.out.println(track);
+
+        // CREATE TRACK
+        System.out.println("introduce nombre:");
+        String nameTrack = sc.nextLine();
+        System.out.println("introduce album ID:");
+        String albumId = sc.nextLine();
+        System.out.println("introduce mediatype ID:");
+        int mediaTypeId = sc.nextInt();
+        System.out.println("introduce genre ID:");
+        int genreId = sc.nextInt();
+        System.out.println("introduce composer :");
+        sc.next();
+        String composer = sc.nextLine();
+        System.out.println("introduce milliseconds:");
+        int milliseconds = sc.nextInt();
+        System.out.println("introduce bytesTrack:");
+        int bytesTrack = sc.nextInt();
+        System.out.println("introduce unitPrice:");
+        float unitPriceTrack = sc.nextFloat();
+        int idNewTrack = track.createTrack(nameTrack, albumId, mediaTypeId, genreId, composer, milliseconds, bytesTrack, unitPriceTrack);
+        System.out.println(idNewTrack);
 
     }
 }

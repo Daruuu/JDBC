@@ -82,8 +82,8 @@ public class Album {
         return idAlbumNou;
     }
 
-    public Album llegeixAlbum(int idAlbum) {
-        Statement stmt = null;
+    public Album searchAlbumById(int idAlbum) {
+//        Statement stmt = null;
         Album album = null;
         try {
             String query = "SELECT * FROM Album WHERE AlbumId = ?";
@@ -102,7 +102,7 @@ public class Album {
         } catch (Exception e) {
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
         }
-        System.out.println("Operation done successfully");
+        System.out.printf("AlbumId %s found!\n", idAlbum);
         return album;
     }
 

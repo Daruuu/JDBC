@@ -1,2 +1,3 @@
 # JDBC
-Create a CRUD operations in Java with JDBC using SQlite database
+This is a repository where I practice with CRUD operations in Java using API JDBC.
+The databases are in SQLite .
