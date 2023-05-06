@@ -3,10 +3,9 @@ package p1;
 import albumBasicJDBC.Album;
 import albumBasicJDBC.Connexio;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class Track {
@@ -26,6 +25,18 @@ public class Track {
     }
 
     public Track(String name, int idAlbum, int idMediaType, int idGenre, String composer, int milliseconds, int bytes, float unitPrice) {
+        this.name = name;
+        this.idAlbum = idAlbum;
+        this.idMediaType = idMediaType;
+        this.idGenre = idGenre;
+        this.composer = composer;
+        this.milliseconds = milliseconds;
+        this.bytes = bytes;
+        this.unitPrice = unitPrice;
+    }
+
+    public Track(int trackId, String name, int idAlbum, int idMediaType, int idGenre, String composer, int milliseconds, int bytes, float unitPrice) {
+        this.trackId = trackId;
         this.name = name;
         this.idAlbum = idAlbum;
         this.idMediaType = idMediaType;
@@ -106,7 +117,7 @@ public class Track {
 
     @Override
     public String toString() {
-        return "Track{" +
+        return "\nTrack{\n" +
                 "trackId=" + trackId +
                 ", name='" + name + '\'' +
                 ", idAlbum=" + idAlbum +
@@ -116,6 +127,7 @@ public class Track {
                 ", milliseconds=" + milliseconds +
                 ", bytes=" + bytes +
                 ", unitPrice=" + unitPrice +
+                "\n" +
                 '}';
     }
 
@@ -143,9 +155,13 @@ public class Track {
             } else {
                 throw new SQLException("Alguna de los ID de las FK no es correcto!");
             }
+
         } catch (Exception e) {
             System.out.println(e.getClass() + e.getMessage());
         }
+        psAlbum.close();
+        psMediaT.close();
+        psGenre.close();
         return false;
     }
 
@@ -284,41 +300,92 @@ public class Track {
         return track;
     }
 
+    public void modifyTrack(int trackId, String nameTrack, int albumId, int mediaTypeId, int genreId, String composer, int milliseconds, int bytesTrack, float unitPriceTrack) throws Exception {
 
+        if (comprobarTrackFks(albumId, mediaTypeId, genreId)) {
 
-    public void modifiyTrack( String nameTrack, int albumId, int mediaTypeId, int genreId, String composer, int milliseconds, int bytesTrack, float unitPriceTrack) throws SQLException {
+            connection.setAutoCommit(false);
 
-        connection.setAutoCommit(false);
+            String query = "UPDATE Track " +
+                    "SET Name = ?, AlbumId = ?, MediaTypeId = ?, GenreId = ?, Composer = ?, Milliseconds = ?, Bytes = ?, UnitPrice = ? " +
+                    "WHERE TrackId = ?";
 
-        String query = "UPDATE Track" +
-                "SET Name = ?, AlbumId = ?, MediaTypeId = ?, GenreId = ?, Composer = ?, Milliseconds = ?, Bytes = ?, UnitPrice = ?" +
-                "WHERE TrackId = ?";
+            try (PreparedStatement ps = connection.prepareStatement(query)) {
+                ps.setString(1, nameTrack);
+                ps.setInt(2, albumId);
+                ps.setInt(3, mediaTypeId);
+                ps.setInt(4, genreId);
+                ps.setString(5, composer);
+                ps.setInt(6, milliseconds);
+                ps.setInt(7, bytesTrack);
+                ps.setFloat(8, unitPriceTrack);
+                ps.setInt(9, trackId);
 
-        try(PreparedStatement ps = connection.prepareStatement(query)){
-            ps.setString(1, nameTrack);
-            ps.setInt(2, albumId);
-            ps.setInt(3,mediaTypeId);
-            ps.setInt(4, genreId);
-            ps.setString(5, composer);
-            ps.setInt(6,milliseconds);
-            ps.setInt(7, bytesTrack);
-            ps.setFloat(8,unitPriceTrack);
-            ps.setInt(9, trackId);
+                ps.executeUpdate();
+                ps.close();
+                connection.commit();
+                System.out.println("modificacion correcta!");
 
-            int updateDb = ps.executeUpdate();
-            connection.commit();
-        } catch (SQLException e) {
-            try{
-                connection.rollback();
-            } catch (SQLException e2){
-                throw new RuntimeException(e2);
+            } catch (SQLException e) {
+                try {
+                    connection.rollback();
+                } catch (SQLException e2) {
+                    throw new RuntimeException(e2);
+                }
+                throw new RuntimeException(e);
             }
-            throw new RuntimeException(e);
+        } else {
+            throw new Exception("alguno de los Fk son incorrectos;");
         }
-
     }
 
-    public static void main(String[] args) throws SQLException {
+    public void eliminarTrack(int idTrack) {
+        try {
+            connection.setAutoCommit(false);
+            String query = "DELETE FROM Track WHERE TrackId = ?";
+            PreparedStatement ps = connection.prepareStatement(query);
+            ps.setInt(1, idTrack);
+            ps.executeUpdate();
+            connection.commit();
+            ps.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        System.out.println("eliminado correctamente " + idTrack);
+    }
+
+    public List<Track> listarTracks() {
+        Statement statement;
+        List<Track> listTracks = new ArrayList<>();
+        String query = "SELECT * FROM TRACK;";
+
+        try {
+            statement = connection.createStatement();
+            ResultSet rs = statement.executeQuery(query);
+
+            while (rs.next()) {
+                // atributos de la tabla Track
+                int trackId = rs.getInt("TrackId");
+                String name = rs.getString("Name");
+                int idAlbumFk = rs.getInt("AlbumId");
+                int idMediaTypeFk = rs.getInt("MediaTypeId");
+                int idGenreFk = rs.getInt("GenreId");
+                String composer = rs.getString("Composer");
+                int milliseconds = rs.getInt("Milliseconds");
+                int bytes = rs.getInt("Bytes");
+                float unitPrice = rs.getFloat("UnitPrice");
+                listTracks.add(new Track(trackId, name, idAlbumFk, idMediaTypeFk, idGenreFk, composer, milliseconds, bytes, unitPrice));
+            }
+            rs.close();
+            statement.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        System.out.println("lista de Tracks:");
+        return listTracks;
+    }
+
+    public static void main(String[] args) throws Exception {
         Scanner sc = new Scanner(System.in);
 //        System.out.print("introduce idtrack: ");
 //        int idTrack = sc.nextInt();
@@ -331,10 +398,11 @@ public class Track {
 //        System.out.println(track);
 
         // CREATE TRACK
+/*
         System.out.println("introduce nombre:");
         String nameTrack = sc.nextLine();
         System.out.println("introduce album ID:");
-        String albumId = sc.nextLine();
+        int albumId = sc.nextInt();
         System.out.println("introduce mediatype ID:");
         int mediaTypeId = sc.nextInt();
         System.out.println("introduce genre ID:");
@@ -350,6 +418,36 @@ public class Track {
         float unitPriceTrack = sc.nextFloat();
         int idNewTrack = track.createTrack(nameTrack, albumId, mediaTypeId, genreId, composer, milliseconds, bytesTrack, unitPriceTrack);
         System.out.println(idNewTrack);
+*/
+
+        // MODIFICAR TRACK
+/*
+        System.out.println("introduce el ID:");
+        int idTrack = sc.nextInt();
+        System.out.println("introduce nombre:");
+        sc.next();
+        String nameTrack = sc.nextLine();
+        System.out.println("introduce album ID:");
+        int albumId = sc.nextInt();
+        System.out.println("introduce mediatype ID:");
+        int mediaTypeId = sc.nextInt();
+        System.out.println("introduce genre ID:");
+        int genreId = sc.nextInt();
+        System.out.println("introduce composer :");
+        sc.next();
+        String composer = sc.nextLine();
+        System.out.println("introduce milliseconds:");
+        int milliseconds = sc.nextInt();
+        System.out.println("introduce bytesTrack:");
+        int bytesTrack = sc.nextInt();
+        System.out.println("introduce unitPrice:");
+        float unitPriceTrack = sc.nextFloat();
+
+        track.modifyTrack(idTrack, nameTrack, albumId, mediaTypeId, genreId, composer, milliseconds, bytesTrack, unitPriceTrack);
+*/
+
+        //LISTAR TRACKS
+        System.out.println(track.listarTracks());
 
     }
 }
