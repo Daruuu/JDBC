@@ -7,7 +7,7 @@ run:
 	git commit -m " $$COMMITMESSAGE "
 		git push origin
 		echo "<<<<<<<<<<--- REPOSITORY UPDATED SUCCESSFUL!! --->>>>>>>>>>"
-	git log -n 3
+	git log -n 2
 #		@echo "Enter the name of branch (main)"; \
 #read BRANCH; \
 #git push origin $$BRANCH; \
