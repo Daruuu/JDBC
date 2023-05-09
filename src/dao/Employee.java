@@ -6,10 +6,10 @@ public class Employee {
     private int employeeId;
     private String lastName;
     private String firstName;
-    private String Title;
+    private String title;
     private int reportsTo;
-    private Date birthDate;
-    private Date hireDate;
+    private String birthDate;
+    private String hireDate;
     private String address;
     private String city;
     private String state;
@@ -22,10 +22,10 @@ public class Employee {
     public Employee() {
     }
 
-    public Employee(String lastName, String firstName, String title, int reportsTo, Date birthDate, Date hireDate, String address, String city, String state, String country, String postalCode, String phone, String fax, String email) {
+    public Employee(String lastName, String firstName, String title, int reportsTo, String birthDate, String hireDate, String address, String city, String state, String country, String postalCode, String phone, String fax, String email) {
         this.lastName = lastName;
         this.firstName = firstName;
-        Title = title;
+        this.title = title;
         this.reportsTo = reportsTo;
         this.birthDate = birthDate;
         this.hireDate = hireDate;
@@ -39,13 +39,49 @@ public class Employee {
         this.email = email;
     }
 
+    public Employee(int employeeId, String lastName, String firstName, String title, int reportsTo, String birthDate, String hireDate, String address, String city, String state, String country, String postalCode, String phone, String fax, String email) {
+        this.employeeId = employeeId;
+        this.lastName = lastName;
+        this.firstName = firstName;
+        this.title = title;
+        this.reportsTo = reportsTo;
+        this.birthDate = birthDate;
+        this.hireDate = hireDate;
+        this.address = address;
+        this.city = city;
+        this.state = state;
+        this.country = country;
+        this.postalCode = postalCode;
+        this.phone = phone;
+        this.fax = fax;
+        this.email = email;
+    }
+
+    public Employee(String lastName, String firstName, String title, int reportsTo, String birthDate, String hireDate, String address, String city, String state, String country, String postalCode, String phone, String fax, String email, int employeeId) {
+        this.lastName = lastName;
+        this.firstName = firstName;
+        this.title = title;
+        this.reportsTo = reportsTo;
+        this.birthDate = birthDate;
+        this.hireDate = hireDate;
+        this.address = address;
+        this.city = city;
+        this.state = state;
+        this.country = country;
+        this.postalCode = postalCode;
+        this.phone = phone;
+        this.fax = fax;
+        this.email = email;
+        this.employeeId = employeeId;
+    }
+
     public int getEmployeeId() {
         return employeeId;
     }
 
-    public void setEmployeeId(int employeeId) {
-        this.employeeId = employeeId;
-    }
+//    public void setEmployeeId(int employeeId) {
+//        this.employeeId = employeeId;
+//    }
 
     public String getLastName() {
         return lastName;
@@ -64,11 +100,11 @@ public class Employee {
     }
 
     public String getTitle() {
-        return Title;
+        return title;
     }
 
     public void setTitle(String title) {
-        Title = title;
+        this.title = title;
     }
 
     public int getReportsTo() {
@@ -79,19 +115,19 @@ public class Employee {
         this.reportsTo = reportsTo;
     }
 
-    public Date getBirthDate() {
+    public String getBirthDate() {
         return birthDate;
     }
 
-    public void setBirthDate(Date birthDate) {
+    public void setBirthDate(String birthDate) {
         this.birthDate = birthDate;
     }
 
-    public Date getHireDate() {
+    public String getHireDate() {
         return hireDate;
     }
 
-    public void setHireDate(Date hireDate) {
+    public void setHireDate(String hireDate) {
         this.hireDate = hireDate;
     }
 
@@ -165,7 +201,7 @@ public class Employee {
                 "employeeId=" + employeeId +
                 ", lastName='" + lastName + '\'' +
                 ", firstName='" + firstName + '\'' +
-                ", Title='" + Title + '\'' +
+                ", Title='" + title + '\'' +
                 ", reportsTo=" + reportsTo +
                 ", birthDate=" + birthDate +
                 ", hireDate=" + hireDate +

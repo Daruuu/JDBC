@@ -8,7 +8,6 @@ public class Album {
 
     private int idAlbum;
     private String titol;
-    //    private int idArtista;
     private Artist artist;
     private static Connection con = Connexio.getConnection();
 
