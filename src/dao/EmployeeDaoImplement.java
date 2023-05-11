@@ -51,17 +51,18 @@ public class EmployeeDaoImplement implements EmployeeDao {
 
         try {
             connection.setAutoCommit(false);
-            String query = "SELECT * FROM EMPLOYEE WHERE EmployeeId = ?";
+            String query = "DELETE * FROM EMPLOYEE WHERE EmployeeId = ?";
+
             PreparedStatement ps = connection.prepareStatement(query);
             ps.setInt(1, idEmployee);
             ps.executeUpdate();
             connection.commit();
             ps.close();
-        } catch (SQLException s) {
-            throw new RuntimeException(s);
-        }
-        System.out.println("eliminado correctamente con ID: " + idEmployee);
 
+            System.out.println("eliminado correctamente con ID: " + idEmployee);
+        } catch (SQLException s) {
+            System.out.println(s.getClass().getName() + " : " + s.getMessage());
+        }
     }
 
     @Override

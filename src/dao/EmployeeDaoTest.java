@@ -1,6 +1,5 @@
 package dao;
 
-import java.sql.Date;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Scanner;
@@ -54,18 +53,22 @@ public class EmployeeDaoTest {
                 case 1:
                     //CREATE EMPLOYEE
                     Employee employee = createEmployee();
+                    System.out.println(employee);
                     int nuevoEmployeeId = employeeDaoImplement.create(employee);
                     System.out.println("Employee con id: " + nuevoEmployeeId + " creado correctamente!");
                     break;
                 case 2:
                     // DELETE EMPLOYEE
+                    System.out.print("id employee a eliminar: ");
                     int idEmployee = sc.nextInt();
                     employeeDaoImplement.delete(idEmployee);
                     break;
                 case 3:
                     // READ BY ID
+                    System.out.print("introduce id de employee: ");
                     int idEmployeeRead = sc.nextInt();
-                    employeeDaoImplement.read(idEmployeeRead);
+                    Employee readE = employeeDaoImplement.read(idEmployeeRead);
+                    System.out.println(readE);
                     break;
                 case 4:
                     // UPDATE EMPLOYEE
@@ -76,11 +79,14 @@ public class EmployeeDaoTest {
                 case 5:
                     // LISTAR TABLE
                     employeeList = employeeDaoImplement.getEmployees();
+                    for (Employee e : employeeList) {
+                        System.out.print(e + "\n");
+                    }
                     break;
                 default:
                     System.err.println("Introduce una opcion entre 1 -5");
             }
-            sc.nextLine();
+//            opcion = Integer.parseInt(sc.nextLine());
             opcion = sc.nextInt();
         }
     }
@@ -129,7 +135,7 @@ public class EmployeeDaoTest {
 
         System.out.println("introduce email:");
         String email = sc.nextLine();
-        sc.close();
+//        sc.close();
 
         Employee employee = new Employee(lastName, firstName, title, reportsTo, birthDate, hireDate, address, city, state, country, postalCode, phone, fax, email);
 
