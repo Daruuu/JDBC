@@ -107,7 +107,7 @@ public class Album {
 
     //EXER 1.2
     public Album leerAlbumCompleto(int idAlbum) {
-        String query = "SELECT Album.*,Artist.* FROM " +
+        String query = "SELECT Album.*, Artist.* FROM " +
                 "Album JOIN Artist ON Album.idArtista = Artist.artistId " +
                 "WHERE Album.idAlbum = ?";
         Album albumCompleto = null;

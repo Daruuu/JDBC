@@ -9,6 +9,22 @@ public class EmployeeDaoTest {
     private EmployeeDaoImplement employeeDaoImplement = new EmployeeDaoImplement();
     private List<Employee> employeeList;
 
+    public EmployeeDaoImplement getEmployeeDaoImplement() {
+        return employeeDaoImplement;
+    }
+
+    public void setEmployeeDaoImplement(EmployeeDaoImplement employeeDaoImplement) {
+        this.employeeDaoImplement = employeeDaoImplement;
+    }
+
+    public List<Employee> getEmployeeList() {
+        return employeeList;
+    }
+
+    public void setEmployeeList(List<Employee> employeeList) {
+        this.employeeList = employeeList;
+    }
+
     public static void main(String[] args) throws SQLException {
         EmployeeDaoTest edt = new EmployeeDaoTest();
         edt.menuPrograma();
@@ -37,9 +53,9 @@ public class EmployeeDaoTest {
             switch (opcion) {
                 case 1:
                     //CREATE EMPLOYEE
-                    Employee newEmployee;
-                    newEmployee = createEmployee();
-                    employeeDaoImplement.create(newEmployee);
+                    Employee employee = createEmployee();
+                    int nuevoEmployeeId = employeeDaoImplement.create(employee);
+                    System.out.println("Employee con id: " + nuevoEmployeeId + " creado correctamente!");
                     break;
                 case 2:
                     // DELETE EMPLOYEE
@@ -64,6 +80,7 @@ public class EmployeeDaoTest {
                 default:
                     System.err.println("Introduce una opcion entre 1 -5");
             }
+            sc.nextLine();
             opcion = sc.nextInt();
         }
     }
@@ -73,56 +90,100 @@ public class EmployeeDaoTest {
         System.out.println("introduce lastName:");
         String lastName = sc.nextLine();
 
-        System.out.println("introduce firstName");
+        System.out.println("introduce firstName:");
         String firstName = sc.nextLine();
 
-        System.out.println("introduce title");
+        System.out.println("introduce title:");
         String title = sc.nextLine();
 
-        System.out.println("introduce reportTo");
+        System.out.println("introduce reportTo:");
         int reportsTo = sc.nextInt();
+        sc.nextLine();
 
-        System.out.println("introduce birth Date");
+        System.out.println("introduce birth Date:");
         String birthDate = sc.nextLine();
-        System.out.println("introduce hire Date");
+
+        System.out.println("introduce hire Date:");
         String hireDate = sc.nextLine();
-        System.out.println("introduce  address");
+
+        System.out.println("introduce  address:");
         String address = sc.nextLine();
-        System.out.println("introduce ");
+
+        System.out.println("introduce city:");
         String city = sc.nextLine();
-        System.out.println("introduce ");
+
+        System.out.println("introduce state:");
         String state = sc.nextLine();
-        System.out.println("introduce ");
+
+        System.out.println("introduce country:");
         String country = sc.nextLine();
-        System.out.println("introduce ");
+
+        System.out.println("introduce postaCode:");
         String postalCode = sc.nextLine();
-        System.out.println("introduce ");
+
+        System.out.println("introduce phone:");
         String phone = sc.nextLine();
-        System.out.println("introduce ");
+
+        System.out.println("introduce fax:");
         String fax = sc.nextLine();
-        System.out.println("introduce ");
+
+        System.out.println("introduce email:");
         String email = sc.nextLine();
+        sc.close();
+
         Employee employee = new Employee(lastName, firstName, title, reportsTo, birthDate, hireDate, address, city, state, country, postalCode, phone, fax, email);
+
         return employee;
     }
 
     Employee updtEmployee() {
         Scanner sc = new Scanner(System.in);
+
+        System.out.println("introduce lastName:");
         String lastName = sc.nextLine();
+
+        System.out.println("introduce firstName:");
         String firstName = sc.nextLine();
+
+        System.out.println("introduce title:");
         String title = sc.nextLine();
+
+        System.out.println("introduce reportTo:");
         int reportsTo = sc.nextInt();
+
+        System.out.println("introduce birth Date:");
         String birthDate = sc.nextLine();
+
+        System.out.println("introduce hire Date:");
         String hireDate = sc.nextLine();
+
+        System.out.println("introduce  address:");
         String address = sc.nextLine();
+
+        System.out.println("introduce city:");
         String city = sc.nextLine();
+
+        System.out.println("introduce state:");
         String state = sc.nextLine();
+
+        System.out.println("introduce country:");
         String country = sc.nextLine();
+
+        System.out.println("introduce postaCode:");
         String postalCode = sc.nextLine();
+
+        System.out.println("introduce phone:");
         String phone = sc.nextLine();
+
+        System.out.println("introduce fax:");
         String fax = sc.nextLine();
+
+        System.out.println("introduce email:");
         String email = sc.nextLine();
+
+        System.out.println("introduce idEmployee:");
         int idEmployee = sc.nextInt();
+
         Employee employee = new Employee(lastName, firstName, title, reportsTo, birthDate, hireDate, address, city, state, country, postalCode, phone, fax, email, idEmployee);
         return employee;
     }

@@ -13,8 +13,8 @@ public class EmployeeDaoImplement implements EmployeeDao {
     public int create(Employee employee) {
 
         int nuevoIdEmployee = -1;
-        String query = "INSERT INTO Employee(LastName, FirstName, Title, ReportsTo, BirthDate, HireDate, Address, City, State, Country, PostalCode, Phone, Fax, Email, EmployeeId)" +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String query = "INSERT INTO Employee(LastName, FirstName, Title, ReportsTo, BirthDate, HireDate, Address, City, State, Country, PostalCode, Phone, Fax, Email)" +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (PreparedStatement ps = connection.prepareStatement(query)) {
             ps.setString(1, employee.getLastName());
@@ -31,10 +31,10 @@ public class EmployeeDaoImplement implements EmployeeDao {
             ps.setString(12, employee.getPhone());
             ps.setString(13, employee.getFax());
             ps.setString(14, employee.getEmail());
-            ps.setInt(15, employee.getEmployeeId());
 
             ps.executeUpdate();
             ResultSet rs = ps.getGeneratedKeys();
+            rs.next();
             nuevoIdEmployee = rs.getInt(1);
 
             ps.close();
