@@ -1,7 +1,5 @@
 package daoplaylist;
 
-import dao.Employee;
-
 import java.sql.SQLException;
 import java.util.List;
 

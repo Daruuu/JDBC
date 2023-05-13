@@ -1,4 +1,4 @@
-package dao;
+package daoemployee;
 
 import albumBasicJDBC.Connexio;
 
@@ -79,8 +79,8 @@ public class EmployeeDaoImplement implements EmployeeDao {
             while (rs.next()) {
                 String lastName = rs.getString("Lastname");
                 String firstName = rs.getString("FirstName");
-                String title = rs.getString("ReportsTo");
-                int reportsTo = rs.getInt("reportsTo");
+                String title = rs.getString("Title");
+                int reportsTo = rs.getInt("ReportsTo");
                 String birthDate = rs.getString("BirthDate");
                 String hireDate = rs.getString("HireDate");
                 String address = rs.getString("Address");

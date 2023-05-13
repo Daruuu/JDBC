@@ -1,6 +1,4 @@
-package dao;
-
-import java.util.Date;
+package daoemployee;
 
 public class Employee {
     private int employeeId;
