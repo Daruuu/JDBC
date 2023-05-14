@@ -54,6 +54,7 @@ public class EmployeeDaoTest {
                     //CREATE EMPLOYEE
                     Employee employee = createEmployee();
                     System.out.println(employee);
+
                     int nuevoEmployeeId = employeeDaoImplement.create(employee);
                     System.out.println("Employee con id: " + nuevoEmployeeId + " creado correctamente!");
                     break;

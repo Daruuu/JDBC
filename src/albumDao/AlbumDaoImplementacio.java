@@ -1,4 +1,5 @@
 package albumDao;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -6,13 +7,12 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AlbumDaoImplementacio implements AlbumDao{
+public class AlbumDaoImplementacio implements AlbumDao {
 
     static Connection con = Connexio.getConnection();
 
     @Override
-    public int create(Album album) throws SQLException
-    {
+    public int create(Album album) throws SQLException {
         String query = "insert into Album(Title, ArtistId) VALUES (?, ?)";
         PreparedStatement ps = con.prepareStatement(query);
         ps.setString(1, album.getNom());
@@ -27,8 +27,7 @@ public class AlbumDaoImplementacio implements AlbumDao{
 
     @Override
     public Album read(int id)
-            throws SQLException
-    {
+            throws SQLException {
 
         String query = "select * from Album where AlbumId= ?";
         PreparedStatement ps = con.prepareStatement(query);
@@ -47,15 +46,13 @@ public class AlbumDaoImplementacio implements AlbumDao{
 
         if (check == true) {
             return album;
-        }
-        else
+        } else
             return null;
     }
 
     @Override
-    public void update(Album album) throws SQLException
-    {
-        String query= "update Album set Title=?, ArtistId= ? where AlbumId = ?";
+    public void update(Album album) throws SQLException {
+        String query = "update Album set Title=?, ArtistId= ? where AlbumId = ?";
         PreparedStatement ps = con.prepareStatement(query);
         ps.setString(1, album.getNom());
         ps.setInt(2, album.getIdArtista());
@@ -64,8 +61,7 @@ public class AlbumDaoImplementacio implements AlbumDao{
     }
 
     @Override
-    public void delete(int id) throws SQLException
-    {
+    public void delete(int id) throws SQLException {
         String query = "delete from Album where AlbumId =?";
         PreparedStatement ps
                 = con.prepareStatement(query);
@@ -74,8 +70,7 @@ public class AlbumDaoImplementacio implements AlbumDao{
     }
 
     @Override
-    public List<Album> getAlbums() throws SQLException
-    {
+    public List<Album> getAlbums() throws SQLException {
         String query = "select * from Album";
         PreparedStatement ps = con.prepareStatement(query);
         ResultSet rs = ps.executeQuery();
