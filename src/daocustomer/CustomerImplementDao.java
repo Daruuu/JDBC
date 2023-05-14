@@ -65,6 +65,7 @@ public class CustomerImplementDao implements CustomerDao {
     public Customer read(int idCustomer) {
         Customer customerRead = null;
         String query = "SELECT * FROM Customer WHERE CustomerId = ?";
+
         try (PreparedStatement ps = connectionCustomer.prepareStatement(query)) {
             ps.setInt(1, idCustomer);
 
@@ -97,6 +98,28 @@ public class CustomerImplementDao implements CustomerDao {
 
     @Override
     public void update(Customer customer) {
+        String sql = "UPDATE Customer SET FirstName = ?, LastName = ?, Company = ?, Address = ?, City = ?, State = ?, Country = ?, PostalCode = ?, Phone = ?, Fax = ?, Email = ?, SupportRepId = ?";
+
+        try (PreparedStatement ps = connectionCustomer.prepareStatement(sql)) {
+            ps.setString(1, customer.getFirstName());
+            ps.setString(2, customer.getLastName());
+            ps.setString(3, customer.getCompany());
+            ps.setString(4, customer.getAddress());
+            ps.setString(5, customer.getCity());
+            ps.setString(6, customer.getState());
+            ps.setString(7, customer.getCountry());
+            ps.setString(8, customer.getPostalCode());
+            ps.setString(9, customer.getPhone());
+            ps.setString(10, customer.getFax());
+            ps.setString(11, customer.getEmail());
+            ps.setInt(12, customer.getSupportRepId());
+
+            ps.executeUpdate();
+            System.out.println("operacion correcta!");
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
 
     }
 
